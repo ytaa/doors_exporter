@@ -1,0 +1,64 @@
+// override display function for memory usage warning in order to suppress it 
+bool DisplayMemoryWarning () {return false}
+
+for(i=0; i<sizeof(EXPORT_MODULES); i++) 
+{ 
+	// open current module
+	Module m = read(EXPORT_MODULES[i],true) 
+
+	// load the view only if it was specified
+	if ("" != EXPORT_MODULES_VIEWS[i]){
+		load view EXPORT_MODULES_VIEWS[i]
+	}
+	
+	DB theDiag = null
+
+	// Now override block and show, to only do realize
+	void show  (DB x) { realize x; theDiag = x }
+	void block (DB x) { realize x; theDiag = x }
+
+	if (null current Module) {
+		// something went wrong...
+		print "You need to have a current Module set for the export."
+		halt
+	}
+	
+	//print name of module to be exported
+	string module_name = name m
+	print "Exporting " module_name "...\n"
+
+	// we need braces, since -D will be executed at top level and we will get name
+	// clashes for variable defined in word.dxl and the other includes of it.
+	{
+		// TBD: Add support for other export formats
+		if(EXPORT_FORMAT == "xlsx"){
+			// now include the excel.dxl -> this will pop up the dialog, but not halt execution
+			# include <standard/export/office/excel.dxl> 
+
+			// now manually launch the export button callback
+			doExcel theDiag 
+		}
+
+		// get rid of the dialog
+		if (!null theDiag) destroy theDiag
+
+		// close the current module
+		close (m)
+		
+		// save document with exported module
+		Buffer cmd = create
+		cmd += PYTHON_EXE
+		cmd += " "
+		cmd += SAVE_DOCUMENTS_PY
+		cmd += " "
+		cmd += module_name
+		cmd += " "
+		cmd += EXPORT_FORMAT
+		string result = ""
+		win32SystemWait_ (stringOf(cmd), result, -1)
+		delete(cmd)
+	}
+}
+
+// close DOORS
+exit_
