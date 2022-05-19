@@ -1,5 +1,5 @@
 # doors_exporter
-A simple python command line tool for exporting of IBM Rational DOORS modules. Currently, the only supported export format is XLSX (Microsoft Excel Workbook), but the tools can be easly extended with support of other export formats.
+A simple python command line tool for exporting of IBM Rational DOORS modules. Currently, the only supported export formats are CSV and XLSX (Microsoft Excel Workbook), but the tool can be easily extended with support of other export formats.
 
 Exporting of DOORS modules is done with the use of a DXL script. The script input is generated based on a configuration file in JSON format. All exported documents are automatically saved and closed - there is no need for manually clicking through all of the exported documents and saving them.
 
@@ -20,7 +20,7 @@ Below you can find a basic configuration file `basic_config.json`. Lines startin
 	// Command line arguments passed to the DOORS application, optional - deafult value: ''
 	"doors_options":"-osUser -o r -O r -d 36677@server",
 	// Format of exported documents, optional - defualt value 'xlsx'
-	"format": "xlsx",
+	"format": "csv",
 	// List of DOORS modules to be exported - required, at least one module has to be specified
 	"modules":[
 		// Each object represents a single DOORS module

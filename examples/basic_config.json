@@ -1,7 +1,7 @@
 {
 	"doors_path":"C:/Program Files/IBM/Rational/DOORS/9.7/bin/doors.exe",
 	"doors_options":"-osUser -o r -O r -d 36677@server",
-	"format": "xlsx",
+	"format": "csv",
 	"modules":[
 		{
 			"path":"/path/to/example/folder one/example module one",
