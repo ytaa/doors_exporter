@@ -33,12 +33,15 @@ def build_doors_cmd(args):
 	doors_exe_path = config['doors_path'] if 'doors_path' in config else 'C:/Program Files/IBM/Rational/DOORS/9.7/bin/doors.exe'
 	doors_user_options = config['doors_options'] if 'doors_options' in config else ''
 	export_format = config['format'] if 'format' in config else 'xlsx'
+	time_limit = config['time_limit'] if 'time_limit' in config else '0'
 
 	# prepare doors options for dxl script execution
 	doors_export_options = '-f "%TEMP%" -D "'
+	doors_export_options = doors_export_options + 'pragma runLim,{}; '.format(time_limit)
 	doors_export_options = doors_export_options + 'const string PYTHON_EXE = \\"{}\\"; '.format(python_exe_path)
 	doors_export_options = doors_export_options + 'const string SAVE_DOCUMENTS_PY = \\"{}\\"; '.format(save_documents_script_path)
 	doors_export_options = doors_export_options + 'const string EXPORT_FORMAT = \\"{}\\"; '.format(export_format)
+
 
 	# add dxl string arrays with export modules configuration
 	doors_export_options = doors_export_options + build_dxl_string_array('EXPORT_MODULES', [el['path'] for el in config['modules']])
