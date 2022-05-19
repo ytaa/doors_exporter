@@ -11,7 +11,7 @@ To run this tool you need to satisfy following requirements:
 ## Usage
 First you need to prepare a JSON configuration file that provides some basic information about the environment (like path to the DOORS executable) and specifies the list of modules to be exported.
 
-Below you can find a basic configuration file `basic_config.json`. Lines starting with *//* are additional comments - they need to be deleted because comments are not part of standard JSON format.
+Below you can find a basic configuration file `basic_config.json`. Lines starting with *//* are additional comments - they need to be deleted because comments are not part of standard JSON format. For valid example configuration file see [basic_config.json](examples/basic_config.json).
 
 ```json
 {
@@ -21,6 +21,8 @@ Below you can find a basic configuration file `basic_config.json`. Lines startin
 	"doors_options":"-osUser -o r -O r -d 36677@server",
 	// Format of exported documents, optional - defualt value 'xlsx'
 	"format": "csv",
+	// Execution time limit for DXL script, optional - defualt value '0' indicating no limit
+	"time_limit": "0",
 	// List of DOORS modules to be exported - required, at least one module has to be specified
 	"modules":[
 		// Each object represents a single DOORS module
