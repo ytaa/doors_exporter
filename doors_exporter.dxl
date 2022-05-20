@@ -25,7 +25,7 @@ for(i=0; i<sizeof(EXPORT_MODULES); i++)
 	
 	//print name of module to be exported
 	string module_name = name m
-	print "Exporting " module_name "...\n"
+	print "Progress " i "/" sizeof(EXPORT_MODULES) " - exporting " module_name "...\n"
 
 	// we need braces, since -D will be executed at top level and we will get name
 	// clashes for variable defined in word.dxl and the other includes of it.
