@@ -15,22 +15,24 @@ Below you can find a basic configuration file `basic_config.json`. Lines startin
 
 ```json
 {
-	// Path to IBM Rational DOORS application, optional - deafult value: 'C:/Program Files/IBM/Rational/DOORS/9.7/bin/doors.exe'
+	// Path to IBM Rational DOORS application, optional - default value: 'C:/Program Files/IBM/Rational/DOORS/9.7/bin/doors.exe'
 	"doors_path":"C:/Program Files/IBM/Rational/DOORS/9.7/bin/doors.exe",
-	// Command line arguments passed to the DOORS application, optional - deafult value: ''
+	// Command line arguments passed to the DOORS application, optional - default value: ''
 	"doors_options":"-osUser -o r -O r -d 36677@server",
-	// Format of exported documents, optional - defualt value 'xlsx'
+	// Format of exported documents, optional - default value 'xlsx'
 	"format": "csv",
-	// Execution time limit for DXL script, optional - defualt value '0' indicating no limit
+	// Execution time limit for DXL script, optional - default value '0' indicating no limit
 	"time_limit": "0",
-	// List of DOORS modules to be exported - required, at least one module has to be specified
+	// DXL script encoding, optional - default value 'utf-8'
+	"encoding": "utf-8",
+	// List of DOORS modules to be exported, required, at least one module has to be specified
 	"modules":[
 		// Each object represents a single DOORS module
 		{
 			// Path to the first DOORS module, required
 			"path":"/path/to/example/folder one/example module one",
-			// DOORS module view to be used for export, optional - defualt value: ''
-			// In case of the defualt value, the defult view will be used for the export
+			// DOORS module view to be used for export, optional - default value: ''
+			// In case of the default value, the default view will be used for the export
 			"view":"example view"
 		},
 		{

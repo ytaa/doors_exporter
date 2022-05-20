@@ -11,11 +11,14 @@ class DoorsExporter:
 		self.python_exe_path = sys.executable.replace('\\', '/')
 		current_dir_path = os.path.dirname(__file__).replace('\\', '/')
 		self.save_documents_script_path = current_dir_path + '/save_documents.py'
+		self.tmp_export_config_dxl_path = 'tmp_export_config.dxl'
 	##
 
 	def run(self):
+		self.generate_tmp_export_config_dxl()
 		doors_cmd = self.build_doors_cmd()
 		subprocess.call(doors_cmd, shell=False)
+		os.remove(self.tmp_export_config_dxl_path)
 	##
 
 	def build_dxl_string_array(self, name, str_list):
@@ -23,35 +26,53 @@ class DoorsExporter:
 		dxl = 'const string {}[] = {{'.format(name)
 
 		for item in str_list:
-			dxl = dxl + '\\"{}\\",'.format(item)
+			dxl = dxl + '"{}",'.format(item)
 
 		# remove last comma
 		dxl = dxl[:-1]
 
 		# close array
-		dxl = dxl + '}; '
+		dxl = dxl + '}\n'
 
 		return dxl
+	##
+
+	def generate_tmp_export_config_dxl(self):
+		# copy parameters from config or use default values
+		doors_exe_path = self.config['doors_path'] if 'doors_path' in self.config else 'C:/Program Files/IBM/Rational/DOORS/9.7/bin/doors.exe'
+		export_format = self.config['format'] if 'format' in self.config else 'xlsx'
+		time_limit = self.config['time_limit'] if 'time_limit' in self.config else '0'
+		encoding = self.config['encoding'] if 'encoding' in self.config else 'utf-8'
+
+		# content of export configuration dxl script
+		export_config_src = ''
+		export_config_src = export_config_src + 'pragma encoding,"{}"\n'.format(encoding)
+		export_config_src = export_config_src + 'pragma runLim,{}\n'.format(time_limit)
+		export_config_src = export_config_src + 'const string PYTHON_EXE = "{}"\n'.format(self.python_exe_path)
+		export_config_src = export_config_src + 'const string SAVE_DOCUMENTS_PY = "{}"\n'.format(self.save_documents_script_path)
+		export_config_src = export_config_src + 'const string EXPORT_FORMAT = "{}"\n'.format(export_format)
+
+		# add dxl string arrays with export modules configuration
+		export_config_src = export_config_src + self.build_dxl_string_array('EXPORT_MODULES', [el['path'] for el in self.config['modules']])
+		export_config_src = export_config_src + self.build_dxl_string_array('EXPORT_MODULES_VIEWS', [(el['view'] if 'view' in el else '') for el in self.config['modules']])
+
+		# create the export configuration dxl script
+		f = open(self.tmp_export_config_dxl_path, 'w')
+		f.write(export_config_src)
+		f.close()
 	##
 
 	def build_doors_cmd(self):
 		# copy parameters from config or use default values
 		doors_exe_path = self.config['doors_path'] if 'doors_path' in self.config else 'C:/Program Files/IBM/Rational/DOORS/9.7/bin/doors.exe'
 		doors_user_options = self.config['doors_options'] if 'doors_options' in self.config else ''
-		export_format = self.config['format'] if 'format' in self.config else 'xlsx'
-		time_limit = self.config['time_limit'] if 'time_limit' in self.config else '0'
+
 
 		# prepare doors options for dxl script execution
 		doors_export_options = '-f "%TEMP%" -D "'
-		doors_export_options = doors_export_options + 'pragma runLim,{}; '.format(time_limit)
-		doors_export_options = doors_export_options + 'const string PYTHON_EXE = \\"{}\\"; '.format(self.python_exe_path)
-		doors_export_options = doors_export_options + 'const string SAVE_DOCUMENTS_PY = \\"{}\\"; '.format(self.save_documents_script_path)
-		doors_export_options = doors_export_options + 'const string EXPORT_FORMAT = \\"{}\\"; '.format(export_format)
 
-
-		# add dxl string arrays with export modules configuration
-		doors_export_options = doors_export_options + self.build_dxl_string_array('EXPORT_MODULES', [el['path'] for el in self.config['modules']])
-		doors_export_options = doors_export_options + self.build_dxl_string_array('EXPORT_MODULES_VIEWS', [(el['view'] if 'view' in el else '') for el in self.config['modules']])
+		# include dxl export config script
+		doors_export_options = doors_export_options + '#include <{}>; '.format(self.tmp_export_config_dxl_path)
 
 		# include dxl export script
 		doors_export_options = doors_export_options + '#include <doors_exporter.dxl>"'

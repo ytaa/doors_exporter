@@ -3,6 +3,7 @@
 	"doors_options":"-osUser -o r -O r -d 36677@server",
 	"format": "csv",
 	"time_limit": "0",
+	"encoding": "utf-8",
 	"modules":[
 		{
 			"path":"/path/to/example/folder one/example module one",
