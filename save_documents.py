@@ -21,6 +21,11 @@ def main():
 		import xlwings as xw
 		from xlwings.constants import FileFormat
 
+		# disable alerts in all excel applications
+		# might be useful in case of overwriting previous output files
+		for app in xw.apps:
+			app.display_alerts = False
+
 		# save all excel workbooks
 		wbt_cnt = ''
 		for wb in xw.books:
